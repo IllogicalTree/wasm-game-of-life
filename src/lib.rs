@@ -11,11 +11,13 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 extern crate web_sys;
 
 // A macro to provide `println!(..)`-style syntax for `console.log` logging.
+
 macro_rules! log {
     ( $( $t:tt )* ) => {
         web_sys::console::log_1(&format!( $( $t )* ).into());
     }
 }
+
 
 #[wasm_bindgen]
 #[repr(u8)]
@@ -35,6 +37,7 @@ pub struct Universe {
     cells: FixedBitSet,
 }
 
+
 /// Public methods, exported to JavaScript.
 #[wasm_bindgen]
 impl Universe {
@@ -43,8 +46,8 @@ impl Universe {
 
         utils::set_panic_hook();
 
-        let width = 6;
-        let height = 6;
+        let width = 128;
+        let  height = 128;
 
         let size = (width * height) as usize;
         let mut cells = FixedBitSet::with_capacity(size);
@@ -56,7 +59,7 @@ impl Universe {
         Universe {
             width,
             height,
-            cells,
+            cells
         }
     }
 
@@ -69,6 +72,7 @@ impl Universe {
                 let cell = self.cells[idx];
                 let live_neighbors = self.live_neighbor_count(row, col);
 
+                /*
                 log!(
                   "cell[{}, {}] is initially {:?} and has {} live neighbors",
                   row,
@@ -76,6 +80,7 @@ impl Universe {
                   cell,
                   live_neighbors
                 );
+                */
 
                 next.set(idx, match (cell, live_neighbors) {
                     (true, x) if x < 2 => false,
@@ -85,7 +90,7 @@ impl Universe {
                     (otherwise, _) => otherwise
                 });
 
-                log!("    it becomes {:?}", next);
+                //log!("    it becomes {:?}", next);
             }
         }
 
@@ -112,6 +117,21 @@ impl Universe {
 
     pub fn cells(&self) -> *const u32 {
         self.cells.as_slice().as_ptr()
+    }
+
+    pub fn toggle_cell(&mut self, row: u32, column: u32) {
+        let idx = self.get_index(row, column);
+        self.cells.set(idx, !self.cells[idx]);
+    }
+
+    pub fn clear_cells(&mut self) {
+        self.cells.clear();
+    }
+
+    pub fn set_random_cells(&mut self) {
+        for i in 0..self.cells.len() {
+            self.cells.set(i, js_sys::Math::random() < 0.5);
+        }
     }
 }
 
@@ -148,3 +168,4 @@ impl Universe {
         }
     }
 }
+

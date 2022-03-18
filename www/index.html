@@ -15,11 +15,24 @@
         align-items: center;
         justify-content: center;
       }
+      #fps {
+        white-space: pre;
+        font-family: monospace;
+      }
     </style>
   </head>
   <body>
     <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
+    <div id="fps"></div>
     <canvas id="game-of-life-canvas"></canvas>
+    <button id="play-pause"></button>
+    <button id="clear">Clear</button>
+    <button id="random">Randomise</button>
+    <div>
+      <input type="range" id="speed" name="speed" 
+             min="1" max="100" value="50" step="5">
+      <label for="speed">Speed</label>
+    </div>
     <script src="./bootstrap.js"></script>
   </body>
 </html>
